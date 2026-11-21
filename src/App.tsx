@@ -80,6 +80,7 @@ export default function App(){
   if(ready&&!session&&!isAuth){window.location.replace('/login?next='+encodeURIComponent(window.location.pathname));return null;}
   if(!ready)return <div className="auth-shell"><LoaderCircle className="spin" aria-label="Loading"/></div>;
   if(session)return <Dashboard
+    avatarUrl={session.user.user_metadata?.avatar_url||session.user.user_metadata?.picture}
     displayName={session.user.user_metadata?.full_name||session.user.email?.split('@')[0]||'there'}
     onSignOut={()=>{void supabase?.auth.signOut().then(()=>window.location.assign('/'));}}
   />;

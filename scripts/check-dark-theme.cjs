@@ -12,17 +12,19 @@ await page.route('**/rest/v1/documents*',route=>route.fulfill({contentType:'appl
 // Render the actual dashboard in an isolated browser fixture; no account or backend records are created.
 await page.route('**/src/main.tsx*',route=>route.fulfill({contentType:'application/javascript',body:`import React from '/node_modules/.vite/deps/react.js';import ReactDOM from '/node_modules/.vite/deps/react-dom_client.js';import Dashboard from '/src/Dashboard.tsx';import '/src/styles.css';import '/src/dark.css';ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(Dashboard,{displayName:'Maria',onSignOut:()=>{}}));`}));
 await page.goto('http://127.0.0.1:5175/app');console.log('fixture URL',page.url());await page.getByRole('heading',{name:'Bun venit, Maria!'}).waitFor();await page.locator('.next-document').waitFor();
-assert.equal(await page.locator('.simple-document').count(),3);assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+assert.equal(await page.locator('.simple-document').count(),3);assert.equal(await page.locator('.folder-button').count(),2);assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
 await page.screenshot({path:'outputs/dark-dashboard-mobile.png',fullPage:true});
 assert((await page.locator('.priority-name h3').innerText()).includes('Inspecție'));
 await page.getByRole('button',{name:'Vezi detaliile',exact:true}).click();await page.waitForURL('**/documents/sample-itp');await page.getByRole('heading',{name:'Actul a expirat',exact:true}).waitFor();assert.equal(await page.locator('.document-journey li').count(),3);await page.screenshot({path:'outputs/document-journey-mobile.png',fullPage:true});
-await page.getByRole('navigation').getByRole('link',{name:'Acasă'}).click();await page.locator('.category-tiles button').filter({hasText:'Personale'}).click();await page.waitForURL('**/documents');assert.equal(await page.locator('.simple-document').count(),1);await page.getByRole('button',{name:'Arată toate dosarele'}).click();
+await page.getByRole('navigation').getByRole('link',{name:'Acasă'}).click();await page.locator('.folder-button').filter({hasText:'Personal'}).click();await page.waitForURL('**/documents?category=Personal');assert.equal(await page.locator('.simple-document').count(),1);await page.reload();await page.locator('.simple-document').waitFor();assert.equal(await page.locator('.simple-document').count(),1);await page.getByRole('button',{name:'Arată toate dosarele'}).click();
 await page.getByRole('navigation').getByRole('link',{name:'Actele mele'}).click();await page.waitForURL('**/documents');await page.getByRole('button',{name:'Expirate',exact:true}).click();assert.equal(await page.locator('.simple-document').count(),1);
-await page.getByRole('link',{name:'Adaugă un act',exact:true}).click();await page.waitForURL('**/documents/new');await page.getByRole('button',{name:'RCA',exact:true}).click();assert.equal(await page.getByLabel('Numele actului',{exact:true}).inputValue(),'RCA');await page.screenshot({path:'outputs/dark-add-mobile.png',fullPage:true});
+await page.getByRole('link',{name:'Adaugă un act',exact:true}).click();await page.waitForURL('**/documents/new');await page.getByRole('button',{name:'RCA',exact:true}).click();assert.equal(await page.getByLabel('Numele actului',{exact:true}).inputValue(),'RCA');assert.equal(await page.locator('select[name=category] option').count(),2);await page.screenshot({path:'outputs/dark-add-mobile.png',fullPage:true});
 await page.getByRole('navigation').getByRole('link',{name:'Reamintiri'}).click();await page.getByText('Notificările automate nu sunt active',{exact:true}).waitFor();await page.screenshot({path:'outputs/dark-reminders-mobile.png',fullPage:true});
 await page.getByRole('navigation').getByRole('link',{name:'Acasă'}).click();await page.setViewportSize({width:1365,height:1000});await page.screenshot({path:'outputs/dark-dashboard-desktop.png',fullPage:true});
 assert.deepEqual(errors,[]);console.log('PASS: dark landing/login/dashboard, mobile overflow, next expiry card, document filtering, real page navigation, add presets, reminder status; no runtime errors.');
 }finally{await browser.close()}})().catch(e=>{console.error(e);process.exitCode=1});
+
+
 
 
 
