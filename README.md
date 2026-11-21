@@ -38,7 +38,7 @@ The browser uses the signed-in user's access token. The supplied publishable key
 
 Editing and calendar export work with the original database. The additive upgrade adds multiple reminder dates, renewal history, version checks, push subscriptions and a deduplicated delivery queue.
 
-The push receiver, Edge Function sender, permission/settings UI, device test action, and cron SQL are implemented. Hosted push is **not active** until the project owner applies the migration, deploys the function, configures secrets, and enables the schedule. The UI checks service readiness before enabling activation.
+The push receiver, Edge Function sender, permission/settings UI, device test action, and cron SQL are implemented. The migration, function, private secrets, and 15-minute schedule were deployed to the existing project on 21 November 2026. An authorized live dispatch returned HTTP 200; anonymous calls and invalid cron secrets returned HTTP 401. Each device still needs notification permission, activation, and a real notification test. The UI checks service readiness before enabling activation.
 
 See [supabase/SETUP.md](supabase/SETUP.md) for exact setup and phone verification steps. VAPID keys were generated in the ignored `.env.push` file; never commit that file or expose its private key to browser code. No WhatsApp provider or paid messaging service has been enabled.
 
@@ -107,5 +107,6 @@ Then test in the browser:
 
 
 References: https://supabase.com/docs/guides/auth/social-sign-in/auth-google and https://supabase.com/docs/guides/auth/general-configuration
+
 
 

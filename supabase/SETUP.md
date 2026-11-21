@@ -2,6 +2,10 @@
 
 The frontend detects the database version. Editing and calendar export work with the original schema. Multiple reminder dates, renewal history, and server push require this upgrade. No paid WhatsApp service is used. Provider quotas and current plan limits still apply.
 
+## Current deployment
+
+For the existing expiry-pocket project, the migration, Edge Function, secrets, and cron schedule were deployed on 21 November 2026. The sender was checked live with an empty queue: HTTP 200 for the authorized dispatcher and HTTP 401 for anonymous/invalid-secret calls. Actual phone receipt remains a device test. The steps below document setup for recovery or another environment.
+
 ## 1. Database
 
 Open the existing project's Supabase SQL Editor. Run `migrations/202611210001_reminders_and_renewals.sql` once. It is additive, preserves existing documents, enables row-level security, and rejects stale renewal requests. The existing `schema.sql` must already have been applied.
@@ -48,7 +52,7 @@ Notifications show a generic message without document names/references on the lo
 
 ## Queue behavior and limits
 
-Each document version, lead time, and device has one queue key. The sender claims up to 10 jobs per run with a 10-minute lease, retries transient failures at most five times, and disables endpoints returning 404/410. A device notification tag suppresses duplicate visible alerts when a worker crashes after sending and before recording acceptance. Exactly-once delivery across a network is not guaranteed.
+Each document reminder version, lead time, and device has one queue key. Metadata-only edits do not increment the reminder version or resend an accepted alert. The sender claims up to 10 jobs per run with a 10-minute lease, retries transient failures at most five times, and disables endpoints returning 404/410. A device notification tag suppresses duplicate visible alerts when a worker crashes after sending and before recording acceptance. Exactly-once delivery across a network is not guaranteed.
 
 An hourly preference means the server sends on that local date after the chosen hour. New reminders are created for dates due that day; existing queued jobs retry up to the document's expiry date. Past dates are not all sent at once when a user first subscribes. Updating a document invalidates old pending queue entries. At larger volumes increase run frequency/batch throughput after measuring the Edge Function's runtime and plan quotas.
 
@@ -62,3 +66,4 @@ npx deno check supabase/functions/push/index.ts
 ```
 
 The database check runs the actual base schema and migration in an isolated PostgreSQL-compatible PGlite instance. It covers row-level account isolation, renewal history and stale version rejection, subscription validation, queue claims, retries, and delivery deduplication. It does not alter the hosted database or create live users.
+

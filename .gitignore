@@ -44,3 +44,7 @@ yarn-error.log*
 .DS_Store
 
 !.env.example
+
+# Supabase CLI local state
+/supabase/.temp/
+/supabase/.branches/
