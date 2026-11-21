@@ -2,11 +2,11 @@
   "id": "/",
   "name": "Expiry Pocket",
   "short_name": "Pocket",
-  "start_url": "/",
+  "start_url": "/app",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#f5f7fa",
-  "theme_color": "#163d36",
+  "background_color": "#0c0d0f",
+  "theme_color": "#0c0d0f",
   "icons": [
     {
       "src": "/icon-192.png",
@@ -22,3 +22,4 @@
     }
   ]
 }
+

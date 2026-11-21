@@ -1,4 +1,4 @@
-# Expiry Pocket
+﻿# Expiry Pocket
 
 React + TypeScript + Vite, with Supabase Auth, Postgres, and private Storage.
 Installable on supported mobile browsers; no separate native app is required.
@@ -27,33 +27,31 @@ The browser uses the signed-in user's access token. The supplied publishable key
 ## Features
 
 - Google sign-in first, with email/password signup and sign-in as a fallback. No confirmation email when the Email provider is configured below.
-- Vehicles, Personal, Home, Health, and Other categories.
+- Mașină and Personal folders. Previously saved categories remain accessible in the complete list.
 - Expiry dashboard, search, category/status filters, and a renewal checklist.
 - Optional private PDF/JPG/PNG/WebP uploads up to 5 MB.
-- Download attachments, delete documents, and add renewed versions.
-- Reminder lead times of 1, 3, 7, 14, 30, 60, or 90 days.
+- Download attachments, edit documents, export calendars, and delete documents.
+- Single reminder lead time on the original schema; multiple alerts and renewal history after the additive database upgrade.
 - Responsive layout and a web app manifest for phone installation.
 
-## Notifications: pending setup
+## Reminders, renewal history and push
 
-Reminder dates currently drive the in-app checklist. No automatic WhatsApp or background push messages are sent yet, and the app labels these channels as needing setup.
+Editing and calendar export work with the original database. The additive upgrade adds multiple reminder dates, renewal history, version checks, push subscriptions and a deduplicated delivery queue.
 
-For production WhatsApp reminders:
-- Choose Meta Cloud API or a provider such as Twilio.
-- Register a WhatsApp Business sender and configure an approved utility reminder template.
-- Collect and store user consent and their destination phone number.
-- Deploy a scheduled Supabase Edge Function to find due documents and send notifications.
-- Keep provider credentials in Edge Function secrets, never in browser code.
-- Store a delivery ledger with unique document/channel/reminder-date keys; retry transient failures without duplicating successful sends.
+The push receiver, Edge Function sender, permission/settings UI, device test action, and cron SQL are implemented. Hosted push is **not active** until the project owner applies the migration, deploys the function, configures secrets, and enables the schedule. The UI checks service readiness before enabling activation.
 
-For background push:
-- Generate a VAPID key pair and configure server secrets.
-- Collect browser notification permission after a user action and store push subscriptions with user-based RLS.
-- Add service-worker push/click handlers and an Edge Function sender.
-- Schedule delivery using Supabase Cron. The app must be installed on iOS for web push.
-- Confirm delivery on actual iOS and Android devices.
+See [supabase/SETUP.md](supabase/SETUP.md) for exact setup and phone verification steps. VAPID keys were generated in the ignored `.env.push` file; never commit that file or expose its private key to browser code. No WhatsApp provider or paid messaging service has been enabled.
 
-No scheduler, messaging account, or billable provider has been configured by this project.
+Validation:
+
+```sh
+npm test
+npm run build
+npx deno check supabase/functions/push/index.ts
+npx deno test --allow-env supabase/functions/push/index_test.ts
+```
+
+Browser workflow fixtures can be run with `npm run test:browser` against a local Vite server (default port 5180; configurable via TEST_APP_URL). They create no live accounts or records. Database tests run in isolated PGlite, not in the hosted project.
 
 ## Build
 
@@ -109,4 +107,5 @@ Then test in the browser:
 
 
 References: https://supabase.com/docs/guides/auth/social-sign-in/auth-google and https://supabase.com/docs/guides/auth/general-configuration
+
 
