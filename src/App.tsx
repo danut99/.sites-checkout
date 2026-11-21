@@ -21,7 +21,7 @@ export default function App(){
     const params=new URLSearchParams(window.location.hash.slice(1));
     const query=new URLSearchParams(window.location.search);
     if(params.has('error')||query.has('error')){
-      setError('Google sign-in was not completed. Please try again or use your email.');
+      setError('Google sign-in was not completed. Please try again sau folosește emailul.');
       for(const key of ['error','error_code','error_description']){params.delete(key);query.delete(key);}
       const clean=new URL(window.location.href);
       clean.hash=params.toString();clean.search=query.toString();
@@ -80,30 +80,31 @@ export default function App(){
 
   return <div className="auth-shell"><section className="auth-card">
     <a className="brand" href="/"><span className="brandmark"><ShieldCheck size={25}/></span>
-      <span>expiry<span className="brand-light">pocket</span><small>A LITTLE LESS TO REMEMBER</small></span>
+      <span>expiry<span className="brand-light">pocket</span><small>MAI PUȚINE GRIJI, ZI DE ZI</small></span>
     </a>
-    <p className="eyebrow">YOUR EVERYDAY, ORGANISED</p>
-    <h1>{signup?'A home for your paperwork.':'Welcome to your pocket.'}</h1>
-    <p>Keep documents, expiry dates, and renewal reminders together. On your computer and your phone.</p>
-    {!supabase?<div className="error">Sign-in is temporarily unavailable. Please try again later.</div>:<>
+    <p className="eyebrow">ACTELE TALE, MAI UȘOR DE URMĂRIT</p>
+    <h1>{signup?'Creează un cont.':'Bine ai venit.'}</h1>
+    <p>Păstrează actele și datele de expirare într-un singur loc. Pe telefon sau calculator.</p>
+    {!supabase?<div className="error">Conectarea nu este disponibilă momentan. Încearcă mai târziu.</div>:<>
       <button className="google-signin" type="button" onClick={googleSignIn} disabled={busy!==null}>
         {busy==='google'?<LoaderCircle className="spin" size={20}/>:<GoogleIcon/>}
-        {busy==='google'?'Connecting to Google…':'Continue with Google'}
+        {busy==='google'?'Se conectează la Google…':'Continuă cu Google'}
       </button>
-      <div className="auth-divider"><span>or use your email</span></div>
+      <div className="auth-divider"><span>sau folosește emailul</span></div>
       <form onSubmit={submit}>
-        <label>Email address<input autoComplete="email" name="email" type="email" placeholder="you@example.com" required disabled={busy!==null}/></label>
-        <label>Password<input autoComplete={signup?'new-password':'current-password'} name="password" type="password" minLength={signup?8:undefined} placeholder={signup?'At least 8 characters':'Your password'} required disabled={busy!==null}/></label>
+        <label>Adresa de email<input autoComplete="email" name="email" type="email" placeholder="nume@exemplu.ro" required disabled={busy!==null}/></label>
+        <label>Parola<input autoComplete={signup?'new-password':'current-password'} name="password" type="password" minLength={signup?8:undefined} placeholder={signup?'Cel puțin 8 caractere':'Parola ta'} required disabled={busy!==null}/></label>
         <button className="primary email-signin" disabled={busy!==null}>
           {busy==='email'?<LoaderCircle className="spin" size={18}/>:null}
-          {busy==='email'?'Please wait…':signup?'Create account with email':'Sign in with email'}
+          {busy==='email'?'Te rugăm să aștepți…':signup?'Creează cont cu email':'Intră în cont cu email'}
         </button>
       </form>
     </>}
     {error&&<div className="error" role="alert">{error}</div>}
     <button className="text-button" disabled={busy!==null} onClick={()=>{setSignup(!signup);setError('');}}>
-      {signup?'Already have an account? Sign in':'No Google account? Create an account with email'}
+      {signup?'Ai deja un cont? Intră în cont':'Nu ai cont? Creează un cont cu email'}
     </button>
   </section></div>;
 }
+
 
