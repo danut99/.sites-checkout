@@ -1,4 +1,4 @@
-﻿# Expiry Pocket
+# Expiry Pocket
 
 React + TypeScript + Vite, with Supabase Auth, Postgres, and private Storage.
 Installable on supported mobile browsers; no separate native app is required.
@@ -18,7 +18,7 @@ Never put a Supabase secret/service_role key into a VITE_ variable.
 
 1. Open https://supabase.com/dashboard/project/gibbjvdwugvoldcpttfd/sql/new
 2. Run the contents of `supabase/schema.sql`. It creates the documents table, enables row level security, and creates a private documents bucket with per-user file policies.
-3. In Authentication > URL Configuration, add your deployed app URL and http://localhost:5173 to the allowed redirect URLs. Set the Site URL to your chosen production URL.
+3. In Authentication > URL Configuration, set Site URL to http://127.0.0.1:5173 and allow http://127.0.0.1:5173/ and http://localhost:5173/ as redirect URLs.
 4. Configure Google and Email providers as described below. Email signup requires Confirm email to be disabled.
 5. Add a document and optional PDF/photo; confirm it remains after reload and can be downloaded. A second account must not see the first account's documents or files.
 
@@ -63,8 +63,6 @@ npm run preview
 ```
 
 The output is a static `dist/` folder suitable for static hosting.
-This project's Sites hosting manifest points to that directory. Its current Sites audience is private.
-The Sites outer access gate and Supabase app login are separate; opening this to other users requires a requested hosting access change.
 
 The service worker does not cache private documents and does not provide offline document access.
 
@@ -77,7 +75,6 @@ These settings are configured in your Supabase dashboard, not by the browser's p
 
 1. In Google Cloud, create an OAuth client of type **Web application** with the app's consent screen.
 2. Add these Authorized JavaScript origins:
-   - https://expiry-pocket-danut.sablepine5.chatgpt.site
    - http://127.0.0.1:5173
    - http://localhost:5173
 3. Add this Authorized redirect URI:
@@ -97,8 +94,7 @@ New email users then receive an immediate session after choosing an email addres
 ### Redirects
 
 In Authentication > URL Configuration:
-- Set Site URL to https://expiry-pocket-danut.sablepine5.chatgpt.site
-- Add the same URL with a trailing slash to Redirect URLs.
+- Set Site URL to http://127.0.0.1:5173.
 - Add http://127.0.0.1:5173/ and http://localhost:5173/ for local development.
 
 ### Verify
@@ -111,7 +107,6 @@ Then test in the browser:
 - Sign out and sign back in with those credentials.
 - Cancel Google authorization and confirm that email sign-in remains available.
 
-The published Site is owner-private; the outer ChatGPT hosting access gate is separate from Supabase's app login.
 
 References: https://supabase.com/docs/guides/auth/social-sign-in/auth-google and https://supabase.com/docs/guides/auth/general-configuration
 
