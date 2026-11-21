@@ -1,6 +1,12 @@
 ﻿import {createClient} from '@supabase/supabase-js';
 const url=import.meta.env.VITE_SUPABASE_URL, key=import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 export const supabase = url && key ? createClient(url,key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}}) : null;
+export async function getAuthSettings():Promise<{external?:{google?:boolean;email?:boolean};mailer_autoconfirm?:boolean}>{
+  if(!url||!key)throw Error('Sign-in is temporarily unavailable.');
+  const response=await fetch(url+'/auth/v1/settings',{headers:{apikey:key},cache:'no-store',signal:AbortSignal.timeout(15000)});
+  if(!response.ok)throw Error('Could not connect to sign-in. Please try again.');
+  return response.json();
+}
 export type Doc={id:string;name:string;category:string;reference:string;expires:string;days:number;notes:string;fileName:string|null;fileKey:string|null};
 const map=(d:any):Doc=>({...d,fileName:d.file_name,fileKey:d.file_key});
 function client(){if(!supabase)throw Error('Supabase is not configured.');return supabase}
